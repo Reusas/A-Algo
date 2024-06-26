@@ -1,31 +1,32 @@
-
 {
-            "version": "2.0.0",
-            "tasks": [
-                {
-                    "label": "build",
-                    "type": "shell",
-                    "command": "g++",
-                    "args": [
-                        "-g",
-                        "${file}",
-                        "-o",
-                        "${fileDirname}/${fileBasenameNoExtension}.exe",
-                        "-I",
-                        "D:/Programs/Programming/SFML-2.6.1/include", // Update this path
-                        "-L",
-                        "D:/Programs/Programming/SFML-2.6.1/lib",     // Update this path
-                        "-lsfml-graphics",
-                        "-lsfml-window",
-                        "-lsfml-system",
-                        "-mwindows"
-                    ],
-                    "group": {
-                        "kind": "build",
-                        "isDefault": true
-                    },
-                    "problemMatcher": ["$gcc"],
-                    "detail": "Generated task by user."
-                }
-            ]
+    "version": "2.0.0",
+    "tasks": [
+        {
+            "label": "build",
+            "type": "shell",
+            "command": "g++",
+            "args": [
+                "-g",
+                "${workspaceFolder}/main.cpp",
+                "${workspaceFolder}/Grid.cpp",
+                "${workspaceFolder}/Node.cpp",
+                "-I",
+                "D:/Programs/Programming/SFML-2.6.1/include",
+                "-L",
+                "D:/Programs/Programming/SFML-2.6.1/lib",
+                "-lsfml-graphics",
+                "-lsfml-window",
+                "-lsfml-system",
+                "-o",
+                "${workspaceFolder}/build/main.exe",
+                
+            ],
+            "group": {
+                "kind": "build",
+                "isDefault": true
+            },
+            "problemMatcher": ["$gcc"],
+            "detail": "Generated task by user."
+        }
+    ]
 }
