@@ -1,11 +1,13 @@
 #include "Grid.h"
 #include <iostream>
+#include "AStar.h"
+#define LOG(text) std::cout << text <<std::endl;
 
-
-Grid::Grid(int _size)
+Grid::Grid(int _size, AStar* _aStar)
 {
     size = _size;
-    
+    aStar = _aStar;
+
 }
 
 void Grid::createGrid(sf::RenderWindow* window)
@@ -18,8 +20,8 @@ void Grid::createGrid(sf::RenderWindow* window)
         float cellSize = (float)windowSize.x / (float)size;
         
 
-        float xPos = 1.0f;
-        float yPos = 1.0f;
+        float xPos = 0.f;
+        float yPos = 0.f;
 
         // Create grid cells (nodes) and add them to a list.
 
@@ -62,7 +64,6 @@ void Grid::drawGrid(sf::RenderWindow* window)
 
 void Grid::updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMode )
 {
-
     
     // Check if mouse clicks a node
     for (Node &node : nodes)
@@ -83,7 +84,9 @@ void Grid::updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMo
                     
                 }
 
+                
                 node.isStartNode = true;
+                aStar->startNode = &node;
                 node.fill = 1;
                 drawGrid(window);
             }
@@ -100,15 +103,18 @@ void Grid::updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMo
                 }
 
                 node.isEndNode = true;
+                aStar->endNode = &node;
                 node.fill = 1;
                 drawGrid(window);
             }
             // Obstacles do not need to be reset since they dont require to be limited. Only limit is that they cant be drawn on start or end nodes.
             else if(keyMode==2)
             {
-                if(!node.isEndNode && !node.isStartNode)
+                if(!node.isEndNode && !node.isStartNode && node.fill ==0)
                 {
+                    std::cout <<"Fill\n";
                     node.fill =1;
+                    node.isWalkable = false;
                     drawGrid(window);
                 }
             }

@@ -10,6 +10,7 @@
                 "${workspaceFolder}/main.cpp",
                 "${workspaceFolder}/Grid.cpp",
                 "${workspaceFolder}/Node.cpp",
+                "${workspaceFolder}/AStar.cpp",
                 "-I",
                 "D:/Programs/Programming/SFML-2.6.1/include",
                 "-L",
