@@ -1,16 +1,16 @@
 #include "Grid.h"
 #include <iostream>
-#include "AStar.h"
+
 #define LOG(text) std::cout << text <<std::endl;
 
-Grid::Grid(int _size, AStar* _aStar)
+Grid::Grid(int _size, sf::RenderWindow* _window)
 {
     size = _size;
-    aStar = _aStar;
+    window = _window;
 
 }
 
-void Grid::createGrid(sf::RenderWindow* window)
+void Grid::createGrid()
 {
         
 
@@ -31,7 +31,7 @@ void Grid::createGrid(sf::RenderWindow* window)
 
             for (float x = 0; x < windowSize.x; x+=cellSize)
             {
-                Node node(xPos,yPos,cellSize);
+                Node node(xPos,yPos,cellSize,window);
 
                 nodes.push_back(node);
 
@@ -43,11 +43,11 @@ void Grid::createGrid(sf::RenderWindow* window)
             yPos += cellSize;
         }
 
-        drawGrid(window);
+        drawGrid();
 
 }
 
-void Grid::drawGrid(sf::RenderWindow* window)
+void Grid::drawGrid()
 {
 
     // Draw each node
@@ -55,16 +55,16 @@ void Grid::drawGrid(sf::RenderWindow* window)
 
     for(Node node: nodes)
     {
-        node.draw(window);
+        node.draw();
     }
 
 
     window->display();
 }
 
-void Grid::updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMode )
+Node* Grid::updateGrid(sf::Vector2i mousePos, int keyMode )
 {
-    
+    Node* nodeToReturn = nullptr;
     // Check if mouse clicks a node
     for (Node &node : nodes)
     {
@@ -86,9 +86,10 @@ void Grid::updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMo
 
                 
                 node.isStartNode = true;
-                aStar->startNode = &node;
+                //aStar->startNode = &node;
                 node.fill = 1;
-                drawGrid(window);
+                drawGrid();
+                
             }
             else if(keyMode == 1)
             {
@@ -103,9 +104,9 @@ void Grid::updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMo
                 }
 
                 node.isEndNode = true;
-                aStar->endNode = &node;
+               // aStar->endNode = &node;
                 node.fill = 1;
-                drawGrid(window);
+                drawGrid();
             }
             // Obstacles do not need to be reset since they dont require to be limited. Only limit is that they cant be drawn on start or end nodes.
             else if(keyMode==2)
@@ -115,13 +116,16 @@ void Grid::updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMo
                     std::cout <<"Fill\n";
                     node.fill =1;
                     node.isWalkable = false;
-                    drawGrid(window);
+                    drawGrid();
                 }
             }
-
+            nodeToReturn = &node;
 
         }
+        
     }
+
+    return nodeToReturn;
 }
     
 

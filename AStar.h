@@ -13,8 +13,8 @@ class AStar
     public:
     AStar();
     void Run();
-    void Search(Grid* _grid, sf::RenderWindow* _window);
-    void constructPath(Grid* _grid,sf::RenderWindow* _window);
+    void Search(Grid* _grid);
+    void constructPath(Grid* _grid);
     int calculateHeuristic(Node* startNode, Node* endNode);
     int KEY_MODE =0;
     Node* startNode;

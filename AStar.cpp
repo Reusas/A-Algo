@@ -13,8 +13,8 @@ void AStar::Run()
     
     sf::RenderWindow window(sf::VideoMode(1000,1000), "Window");
     
-    Grid grid(200, this);
-    grid.createGrid(&window);
+    Grid grid(50, &window);
+    grid.createGrid();
 
     while (window.isOpen())
     {
@@ -34,7 +34,18 @@ void AStar::Run()
                 {
                     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-                    grid.updateGrid(mousePos, &window, KEY_MODE);
+                    if(KEY_MODE == 0)
+                    {
+                        Node* _startNode = grid.updateGrid(mousePos, KEY_MODE);
+                        startNode = _startNode;
+                    }
+                    else if (KEY_MODE == 1)
+                    {
+                        Node* _endNode = grid.updateGrid(mousePos, KEY_MODE);
+                        endNode = _endNode;
+                    }
+
+                    
                 }
             }
             // If its drawing obstacles then detect mouse hold to allow for easier drawing of obstacles
@@ -44,7 +55,7 @@ void AStar::Run()
                 {
                     sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-                    grid.updateGrid(mousePos, &window, KEY_MODE);
+                    grid.updateGrid(mousePos, KEY_MODE);
                 }
             }
             // Change drawing modes here
@@ -64,7 +75,7 @@ void AStar::Run()
                 }
                 else if(event.key.scancode == sf::Keyboard::Scan::Enter)
                 {
-                    Search(&grid, &window);
+                    Search(&grid);
                 }
 
             }
@@ -75,7 +86,7 @@ void AStar::Run()
     
 }
 
-void AStar::Search(Grid* _grid, sf::RenderWindow* _window)
+void AStar::Search(Grid* _grid)
 {
     LOG("Starting algo");
     std::vector<Node*> openList;
@@ -89,9 +100,6 @@ void AStar::Search(Grid* _grid, sf::RenderWindow* _window)
         // Node with the currently lowest F value
         Node* currentNode = openList[0];
 
-        //std::cout << "First Node X:" << currentNode->xPos << " Y:" << currentNode->yPos << std::endl;
-
-
         // Look for lowest F value
         for(Node* node : openList)
         {
@@ -103,12 +111,13 @@ void AStar::Search(Grid* _grid, sf::RenderWindow* _window)
         // Remove it from the openList and add it to the closed list
         auto it = std::find(openList.begin(),openList.end(),currentNode);
         openList.erase(it);
+        std::cout << "Open list size after erasure:" << openList.size() << std::endl;
         closedList.push_back(currentNode);
         
         if(currentNode == endNode)
         {
-            constructPath(_grid,_window);
-            return;
+            constructPath(_grid);
+            break;
         }
         // Generate children
         int index = 0;
@@ -127,18 +136,34 @@ void AStar::Search(Grid* _grid, sf::RenderWindow* _window)
         }
 
         // Create children here
-
-        Node* rightNode = &_grid->nodes[index +1];
-        Node* leftNode = &_grid->nodes[index -1];
-        Node* upNode = &_grid->nodes[index - _grid->size];
-        Node* downNode =&_grid->nodes[index +_grid->size];
-
-
         std::vector<Node*> childNodes;
-        childNodes.push_back(rightNode);
-        childNodes.push_back(leftNode);
-        childNodes.push_back(upNode);
-        childNodes.push_back(downNode);
+
+        if((index +1) % _grid->size != 0)
+        {
+            Node* rightNode = &_grid->nodes[index +1];
+            childNodes.push_back(rightNode);
+        }
+
+        if(index % _grid->size != 0)
+        {
+             Node* leftNode = &_grid->nodes[index -1];
+             childNodes.push_back(leftNode);
+        }
+
+        if(index - _grid->size >=0)
+        {
+           Node* upNode = &_grid->nodes[index - _grid->size];
+           childNodes.push_back(upNode);
+        }
+
+        if(index + _grid->size < _grid->size * _grid->size)
+        {
+            Node* downNode =&_grid->nodes[index +_grid->size];
+            childNodes.push_back(downNode);
+        }
+
+
+
 
 
         for(Node* node : childNodes)
@@ -148,33 +173,31 @@ void AStar::Search(Grid* _grid, sf::RenderWindow* _window)
             {
                 continue;
             }
-            else if(std::find(openList.begin(),openList.end(), node) ==openList.end())
+
+            auto openIt = std::find(openList.begin(),openList.end(),node);
+            if(openIt == openList.end())
             {
 
-                openList.push_back(node);
                 node->parent = currentNode;
                 node->g = currentNode->g + 1;
                 node->h = calculateHeuristic(node, endNode);
                 node->f = node->g + node->h;
                 node->isChild = true;
                 node->fill = 1;
-                _grid->drawGrid(_window);
+                openList.push_back(node);
+                _grid->drawGrid();
             }
 
-            else if(std::find(openList.begin(),openList.end(), node) !=openList.end())
+            else
             {
-                for(Node* node : openList)
+                if(node->g > currentNode->g)
                 {
-                    if(node->g < currentNode->g)
-                    {
-                        continue;
-                    }
+                    node->parent = currentNode;
+                    node->g = currentNode->g + 1;
+                    node->f = node->g + node->h;
                 }
             }
-
-            openList.push_back(node);
-            
-            
+                        
 
         }
 
@@ -198,7 +221,7 @@ int AStar::calculateHeuristic(Node* startNode, Node* endNode)
 
 }
 
-void AStar::constructPath(Grid* _grid,sf::RenderWindow* _window)
+void AStar::constructPath(Grid* _grid)
 {
         Node* parentNode = endNode->parent;
 
@@ -207,8 +230,8 @@ void AStar::constructPath(Grid* _grid,sf::RenderWindow* _window)
             parentNode->fill = 1;
             parentNode->isChild = false;
             parentNode->isPath = true;
-            parentNode->draw(_window);
-            _grid->drawGrid(_window);
+            parentNode->draw();
+            _grid->drawGrid();
             parentNode = parentNode->parent;
         }
 

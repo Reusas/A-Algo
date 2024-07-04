@@ -5,23 +5,25 @@
 #ifndef GRID_H
 #define GRID_H
 
-class AStar;
+
 
 
 class Grid
 {
 public:
     int size;
-    Grid(int _size, AStar* _aStar);
-    void createGrid(sf::RenderWindow* window);
-    void drawGrid(sf::RenderWindow* window);
-    void updateGrid(sf::Vector2i mousePos, sf::RenderWindow* window, int keyMode);
+    Grid(int _size, sf::RenderWindow* _window);
+    void createGrid();
+    void drawGrid();
+    Node* updateGrid(sf::Vector2i mousePos, int keyMode);
     std::vector<Node> nodes;
     
 
 private:
+    sf::RenderWindow* window;
     sf::Color cellColor = sf::Color::Black;
-    AStar* aStar;
+    sf::Color defaultCellColor = sf::Color::White;
+
 
 
 };

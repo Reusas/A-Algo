@@ -4,8 +4,8 @@ class Node
 {
 
 public:
-    Node(float _xPos, float _yPos, int _size);
-    void draw(sf::RenderWindow* window);
+    Node(float _xPos, float _yPos, int _size, sf::RenderWindow* _window);
+    void draw();
 
     float xPos;
     float yPos;
@@ -23,6 +23,7 @@ public:
     bool isPath = false;
 
 private:
+    sf::RenderWindow* window;
     sf::Color outlineColor = sf::Color(69,69,69,255);
     sf::Color color = sf::Color::Black;
     sf::Color startFillColor = sf::Color::Green;

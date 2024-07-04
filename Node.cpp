@@ -1,13 +1,14 @@
 #include "Node.h"
 
-Node::Node(float _xPos, float _yPos, int _size)
+Node::Node(float _xPos, float _yPos, int _size, sf::RenderWindow* _window)
 {
     xPos = _xPos;
     yPos = _yPos;
     size = _size;
+    window = _window;
 }
 
-void Node::draw(sf::RenderWindow* window)
+void Node::draw()
 {
 
     sf::RectangleShape square(sf::Vector2f(size,size));
