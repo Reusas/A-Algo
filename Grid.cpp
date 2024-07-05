@@ -65,15 +65,18 @@ void Grid::drawGrid()
     window->display();
 }
 
-void Grid::clear()
+void Grid::clear(int index)
 {
 
     
     for(Node &node: nodes)
     {
-        
         node.reset();
-
+        if(index == 1)
+        {
+            node.fillNode(node.wallColor);
+            node.isWalkable = false;
+        }
 
     }
 

@@ -22,6 +22,17 @@ public:
     bool isWalkable = true;
     bool isStartNode = false;
     bool isEndNode = false;
+
+    enum frontierStatus
+    {
+        LEFT,
+        RIGHT,
+        UP,
+        DOWN,
+    };
+
+    frontierStatus _frontierStatus;
+
     sf::Color fillColor;
     sf::Color outlineColor = sf::Color(69,69,69,255);
     sf::Color wallColor = sf::Color::Black;
