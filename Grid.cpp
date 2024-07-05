@@ -17,11 +17,11 @@ void Grid::createGrid()
     // Get size of window and caluclate size of 1 grid cell
         sf::Vector2u windowSize = window->getSize();
 
-        float cellSize = (float)windowSize.x / (float)size;
+        cellSize = (float)windowSize.x / (float)size;
         
-
         float xPos = 0.f;
         float yPos = 0.f;
+        int index = 0;
 
         // Create grid cells (nodes) and add them to a list.
 
@@ -31,12 +31,14 @@ void Grid::createGrid()
 
             for (float x = 0; x < windowSize.x; x+=cellSize)
             {
-                Node node(xPos,yPos,cellSize,window);
+                Node node(xPos,yPos,index,cellSize,window);
 
                 nodes.push_back(node);
 
 
                 xPos += cellSize;
+
+                index = index +1;
 
             }
 
@@ -55,11 +57,27 @@ void Grid::drawGrid()
 
     for(Node node: nodes)
     {
+
         node.draw();
     }
 
 
     window->display();
+}
+
+void Grid::clear()
+{
+
+    
+    for(Node &node: nodes)
+    {
+        
+        node.reset();
+
+
+    }
+
+    drawGrid();
 }
 
 Node* Grid::updateGrid(sf::Vector2i mousePos, int keyMode )
@@ -85,9 +103,8 @@ Node* Grid::updateGrid(sf::Vector2i mousePos, int keyMode )
                 }
 
                 
+                node.fillNode(node.startFillColor);
                 node.isStartNode = true;
-                //aStar->startNode = &node;
-                node.fill = 1;
                 drawGrid();
                 
             }
@@ -103,9 +120,8 @@ Node* Grid::updateGrid(sf::Vector2i mousePos, int keyMode )
                     }
                 }
 
+                node.fillNode(node.endFillColor);
                 node.isEndNode = true;
-               // aStar->endNode = &node;
-                node.fill = 1;
                 drawGrid();
             }
             // Obstacles do not need to be reset since they dont require to be limited. Only limit is that they cant be drawn on start or end nodes.
@@ -113,11 +129,18 @@ Node* Grid::updateGrid(sf::Vector2i mousePos, int keyMode )
             {
                 if(!node.isEndNode && !node.isStartNode && node.fill ==0)
                 {
-                    std::cout <<"Fill\n";
-                    node.fill =1;
+                    node.fillNode(node.wallColor);
                     node.isWalkable = false;
                     drawGrid();
                 }
+            }
+
+            else if(keyMode == 3)
+            {
+                node.fill =0;
+                node.isWalkable = true;
+                node.fillNode(sf::Color::White);
+                drawGrid();
             }
             nodeToReturn = &node;
 

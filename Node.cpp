@@ -1,13 +1,26 @@
 #include "Node.h"
 
-Node::Node(float _xPos, float _yPos, int _size, sf::RenderWindow* _window)
+Node::Node(float _xPos, float _yPos,int _index, int _size, sf::RenderWindow* _window)
 {
     xPos = _xPos;
     yPos = _yPos;
+    index = _index;
     size = _size;
     window = _window;
 }
 
+
+void Node::reset()
+{
+     parent = nullptr;
+     g =0;
+     h =0;
+     f =0;
+     fill = false;
+     isWalkable = true;
+     isStartNode = false;
+     isEndNode = false;
+}
 void Node::draw()
 {
 
@@ -17,33 +30,12 @@ void Node::draw()
     square.setOutlineColor(outlineColor);
     if(fill == 0)
     {
-
        // Do nothing only need the outline
     }
     // If it is filled then depending on if its a start node or not change its color
     else if (fill == 1)
     {
-        if(isStartNode)
-        {
-            square.setFillColor(startFillColor);
-        }
-        else if(isEndNode)
-        {
-            square.setFillColor(endFillColor);
-        }
-        else if(isChild)
-        {
-            square.setFillColor(childFillColor);
-        }
-        else if(isPath)
-        {
-            square.setFillColor(pathFillColor);
-        }
-        else
-        {
-            square.setFillColor(color);
-            isWalkable = false;
-        }
+        square.setFillColor(fillColor);
     }
 
     square.setOutlineThickness(1.f);
@@ -51,5 +43,17 @@ void Node::draw()
     window->draw(square);
 
 
+}
+
+void Node::fillNode(sf::Color _fillColor)
+{
+    if(_fillColor != sf::Color::White)
+    {
+        fill = true;
+    }
+    if(!isEndNode)
+    {
+        fillColor = _fillColor;
+    }
 }
 

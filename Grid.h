@@ -12,9 +12,11 @@ class Grid
 {
 public:
     int size;
+    int cellSize;
     Grid(int _size, sf::RenderWindow* _window);
     void createGrid();
     void drawGrid();
+    void clear();
     Node* updateGrid(sf::Vector2i mousePos, int keyMode);
     std::vector<Node> nodes;
     

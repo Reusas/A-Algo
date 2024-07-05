@@ -2,6 +2,7 @@
 #include "Grid.h"
 #include <iostream>
 #include <algorithm>
+#include <math.h>
 #define LOG(text) std::cout << text <<std::endl;
 AStar::AStar()
 {
@@ -13,7 +14,7 @@ void AStar::Run()
     
     sf::RenderWindow window(sf::VideoMode(1000,1000), "Window");
     
-    Grid grid(50, &window);
+    Grid grid(40, &window);
     grid.createGrid();
 
     while (window.isOpen())
@@ -51,12 +52,22 @@ void AStar::Run()
             // If its drawing obstacles then detect mouse hold to allow for easier drawing of obstacles
             else if(KEY_MODE == 2 &&  sf::Mouse::isButtonPressed(sf::Mouse::Left))
             {
-                if(event.mouseButton.button == sf::Mouse::Left)
-                {
-                    sf::Vector2i mousePos = sf::Mouse::getPosition(window);
 
-                    grid.updateGrid(mousePos, KEY_MODE);
-                }
+                   
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+                grid.updateGrid(mousePos, KEY_MODE);
+                
+            }
+
+            else if(sf::Mouse::isButtonPressed(sf::Mouse::Right))
+            {
+
+                   
+                sf::Vector2i mousePos = sf::Mouse::getPosition(window);
+
+                grid.updateGrid(mousePos, 3);
+                
             }
             // Change drawing modes here
             if(event.type == sf::Event::KeyReleased)
@@ -77,6 +88,10 @@ void AStar::Run()
                 {
                     Search(&grid);
                 }
+                else if (event.key.scancode == sf::Keyboard::Scan::Escape)
+                {
+                    grid.clear();
+                }
 
             }
 
@@ -88,7 +103,6 @@ void AStar::Run()
 
 void AStar::Search(Grid* _grid)
 {
-    LOG("Starting algo");
     std::vector<Node*> openList;
     std::vector<Node*> closedList;
 
@@ -120,20 +134,9 @@ void AStar::Search(Grid* _grid)
             break;
         }
         // Generate children
-        int index = 0;
+        int index = currentNode->index;
 
-        // Loop through nodes to get current nodes index in the list
-        for(Node node : _grid->nodes)
-        {
-            if((&node)->xPos == currentNode->xPos && (&node)->yPos == currentNode->yPos)
-            {
-                LOG(index);
-                
-                break;
-            }
-            index = index + 1;
-            
-        }
+
 
         // Create children here
         std::vector<Node*> childNodes;
@@ -168,43 +171,46 @@ void AStar::Search(Grid* _grid)
 
         for(Node* node : childNodes)
         {
-            
             if(!node->isWalkable || std::find(closedList.begin(),closedList.end(), node) !=closedList.end())
             {
                 continue;
             }
 
+            int tentG = currentNode->g +_grid->cellSize;
             auto openIt = std::find(openList.begin(),openList.end(),node);
             if(openIt == openList.end())
             {
 
+                
                 node->parent = currentNode;
-                node->g = currentNode->g + 1;
+                node->g = tentG;
                 node->h = calculateHeuristic(node, endNode);
                 node->f = node->g + node->h;
-                node->isChild = true;
-                node->fill = 1;
+                node->fillNode(node->childFillColor);
                 openList.push_back(node);
                 _grid->drawGrid();
+
+
+
             }
 
             else
             {
-                if(node->g > currentNode->g)
+                if(tentG < node->g)
                 {
                     node->parent = currentNode;
-                    node->g = currentNode->g + 1;
+                    node->g = tentG;
                     node->f = node->g + node->h;
                 }
             }
-                        
+
+                
 
         }
 
 
-    }
-    LOG("Algo Finished.");
 
+    }
 
 
 }
@@ -216,7 +222,7 @@ int AStar::calculateHeuristic(Node* startNode, Node* endNode)
     int xDist = std::abs(startNode->xPos - endNode->xPos);
     int yDist = std::abs(startNode->yPos - endNode->yPos);
 
-    h = xDist + yDist;
+    h =xDist + yDist;
     return h;
 
 }
@@ -227,11 +233,12 @@ void AStar::constructPath(Grid* _grid)
 
         while(parentNode != nullptr)
         {
-            parentNode->fill = 1;
-            parentNode->isChild = false;
-            parentNode->isPath = true;
-            parentNode->draw();
-            _grid->drawGrid();
+            if(parentNode!= startNode)
+            {
+                parentNode->fillNode(parentNode->pathFillColor);
+                _grid->drawGrid();
+            }
+
             parentNode = parentNode->parent;
         }
 
