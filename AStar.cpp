@@ -1,6 +1,7 @@
 #include "AStar.h"
 #include "Grid.h"
 #include <algorithm>
+#include <queue>
 AStar::AStar()
 {
 
@@ -11,25 +12,37 @@ void AStar::Search(Grid* _grid)
     std::vector<Node*> openList;
     std::vector<Node*> closedList;
 
-    openList.push_back(startNode);
 
-    while(!openList.empty())
+    struct fCheck
+    {
+        bool operator()(Node* a, Node* b)
+        {
+            return a->f > b->f;
+        }
+    };
+
+    std::priority_queue<Node*,std::vector<Node*>,fCheck> openSet;
+        
+        openList.push_back(startNode);
+        openSet.push(startNode);
+
+
+
+
+
+
+
+   // openList.push_back(startNode);
+
+    while(!openSet.empty())
     {
 
         // Node with the currently lowest F value
-        Node* currentNode = openList[0];
+        Node* currentNode = openSet.top();
 
-        // Look for lowest F value
-        for(Node* node : openList)
-        {
-            if(node->f < currentNode->f)
-            {
-                currentNode = node;
-            }
-        }
+
         // Remove it from the openList and add it to the closed list
-        auto it = std::find(openList.begin(),openList.end(),currentNode);
-        openList.erase(it);
+        openSet.pop();
         closedList.push_back(currentNode);
         
         if(currentNode == endNode)
@@ -83,6 +96,7 @@ void AStar::Search(Grid* _grid)
             }
 
             int tentG = currentNode->g +_grid->cellSize;
+            
             auto openIt = std::find(openList.begin(),openList.end(),node);
             if(openIt == openList.end())
             {
@@ -93,6 +107,7 @@ void AStar::Search(Grid* _grid)
                 node->h = calculateHeuristic(node, endNode);
                 node->f = node->g + node->h;
                 node->fillNode(node->childFillColor);
+                openSet.push(node);
                 openList.push_back(node);
                 _grid->drawGrid();
 
@@ -107,6 +122,7 @@ void AStar::Search(Grid* _grid)
                     node->parent = currentNode;
                     node->g = tentG;
                     node->f = node->g + node->h;
+                    openSet.push(node);
                 }
             }
 
