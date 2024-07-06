@@ -3,11 +3,15 @@
 #include "Grid.h"
 #include "Maze.h"
 
+
+const int GRID_SIZE =40;
+
+
 int main()
 {
     sf::RenderWindow window(sf::VideoMode(1000,1000), "Window");
     
-    Grid grid(40, &window);
+    Grid grid(GRID_SIZE, &window);
     grid.createGrid();
 
     AStar aStar = AStar();

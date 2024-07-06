@@ -43,6 +43,7 @@ void Grid::createGrid()
             }
 
             yPos += cellSize;
+            
         }
 
         drawGrid();
@@ -67,7 +68,7 @@ void Grid::drawGrid()
 
 void Grid::clear(int index)
 {
-
+    // Set every node to be a wall. This will be needed for the maze generation
     
     for(Node &node: nodes)
     {
@@ -137,7 +138,7 @@ Node* Grid::updateGrid(sf::Vector2i mousePos, int keyMode )
                     drawGrid();
                 }
             }
-
+            // "Erasing" mode
             else if(keyMode == 3)
             {
                 node.fill =0;

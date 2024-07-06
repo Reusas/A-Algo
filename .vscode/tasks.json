@@ -21,6 +21,7 @@
                 "-lsfml-system",
                 "-o",
                 "${workspaceFolder}/build/main.exe",
+                "-mwindows",
                 
             ],
             "group": {

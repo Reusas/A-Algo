@@ -1,9 +1,6 @@
 #include "AStar.h"
 #include "Grid.h"
-#include <iostream>
 #include <algorithm>
-#include <math.h>
-#define LOG(text) std::cout << text <<std::endl;
 AStar::AStar()
 {
 
@@ -33,7 +30,6 @@ void AStar::Search(Grid* _grid)
         // Remove it from the openList and add it to the closed list
         auto it = std::find(openList.begin(),openList.end(),currentNode);
         openList.erase(it);
-        std::cout << "Open list size after erasure:" << openList.size() << std::endl;
         closedList.push_back(currentNode);
         
         if(currentNode == endNode)
@@ -41,14 +37,16 @@ void AStar::Search(Grid* _grid)
             constructPath(_grid);
             break;
         }
-        // Generate children
+        // Get index of node in the list to know where children are
         int index = currentNode->index;
 
 
 
         // Create children here
+        // Using the index as an offset i can get the children
         std::vector<Node*> childNodes;
 
+        // Checking if is in range.
         if((index +1) % _grid->size != 0)
         {
             Node* rightNode = &_grid->nodes[index +1];
@@ -76,7 +74,7 @@ void AStar::Search(Grid* _grid)
 
 
 
-
+        
         for(Node* node : childNodes)
         {
             if(!node->isWalkable || std::find(closedList.begin(),closedList.end(), node) !=closedList.end())
@@ -122,7 +120,7 @@ void AStar::Search(Grid* _grid)
 
 
 }
-
+// Manhattan distance heuristic
 int AStar::calculateHeuristic(Node* startNode, Node* endNode)
 {
     int h = 0;

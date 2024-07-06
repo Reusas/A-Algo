@@ -28,12 +28,9 @@ void Node::draw()
 
     // If this node isint filled just draw its outline
     square.setOutlineColor(outlineColor);
-    if(fill == 0)
-    {
-       // Do nothing only need the outline
-    }
-    // If it is filled then depending on if its a start node or not change its color
-    else if (fill == 1)
+
+    
+    if (fill == 1)
     {
         square.setFillColor(fillColor);
     }
