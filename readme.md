@@ -21,5 +21,13 @@ This project is a visualization of the Prim maze generation and the A* path find
 
 * You can press SPACE to generate a maze.
 
+# Demo
+
+![Screenshot](/ScreenShots/AStar.jpg?raw=true "A *")
+
+![Screenshot](/ScreenShots/Maze.jpg?raw=true "Maze")
+
+![Screenshot](/ScreenShots/AStar+Maze.jpg?raw=true "A * + Maze")
+
 
 
